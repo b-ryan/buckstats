@@ -4,24 +4,11 @@
             [compojure.core :refer [defroutes GET POST]]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [korma.core :refer :all]
-            [korma.db :as db]))
-
-(db/defdb stand (db/postgres {:db "stand"
-                              :user "stand"
-                              :password "password"
-                              :host "127.0.0.1"}))
-
-(defn latest-entry []
-  (first
-    (select "events"
-      (fields :id :event :start_time :end_time)
-      (order :id :DESC)
-      (limit 1))))
+            [server.db :as db]))
 
 (defroutes app-routes
   (GET "/" []
-    (response (latest-entry)))
+    (response (db/latest-entry)))
   (POST "/stand" []
     (response "coming..."))
   (route/resources "/")
