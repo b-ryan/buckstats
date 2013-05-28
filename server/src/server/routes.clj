@@ -1,5 +1,5 @@
 (ns server.routes
-  (:require [ring.util.response :refer [response]]
+  (:require [ring.util.response :refer [response resource-response]]
             [ring.middleware.json :as json]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.handler :as handler]
@@ -7,10 +7,13 @@
             [server.db :as db]))
 
 (defroutes app-routes
+
   (GET "/" []
-    (response (db/latest-entry)))
+    (resource-response "/html/index.html" {:root "public"}))
+
   (POST "/stand" []
-    (response "coming..."))
+    (response "standing..."))
+
   (route/resources "/")
   (route/not-found "Not Found"))
 
