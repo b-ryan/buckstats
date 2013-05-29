@@ -5,12 +5,14 @@
     <title>Stand!</title>
     <script src="/lib/jquery-1.10.0.min.js"></script>
     <script src="/lib/angular.min.js"></script>
+    <script src="/lib/angular-resource.min.js"></script>
     <script src="/js/stand.js"></script>
   </head>
-  <body ng-app>
+  <body ng-app="stand">
     <div ng-controller="StandCtrl">
-      <a href="#" ng-click="standing()">I'm Standing</a>
-      <a href="#" ng-click="sitting()">I'm Sitting</a>
+      <p><a href="#" ng-click="standing()">I'm Standing</a></p>
+      <p><a href="#" ng-click="sitting()">I'm Sitting</a></p>
+      <pre>{{latest | json}}</pre>
     </div>
   </body>
 </html>

@@ -13,3 +13,9 @@
       (fields :id :event :start_time :end_time)
       (order :id :DESC)
       (limit 1))))
+
+(defn start-event [event]
+  (let [latest (latest-entry)]
+    (if latest
+      "change latest"
+      "start a new one")))
