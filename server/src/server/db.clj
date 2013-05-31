@@ -15,8 +15,8 @@
       (limit 1))))
 
 (defn get-events [& [lim]]
-  (if lim (select "events" (limit lim))
-          (select "events")))
+  (if lim (select "events" (order :id :DESC) (limit lim))
+          (select "events" (order :id :DESC))))
 
 (defn start-event [event]
   (let [latest (latest)]
