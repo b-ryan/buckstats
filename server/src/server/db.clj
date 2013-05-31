@@ -18,8 +18,21 @@
   (if lim (select "events" (order :id :DESC) (limit lim))
           (select "events" (order :id :DESC))))
 
+(defn- start [event-type]
+  (exec-raw
+    ["INSERT INTO events (event, start_time)
+      VALUES ?, current_timestamp"
+    [event-type]]))
+
+(defn- finish [event]
+  (exec-raw
+    ["UPDATE events
+      SET end_time = current_timestamp
+      WHERE id = ?"
+    [(get event :id)]]))
+
 (defn start-event [event]
   (let [latest (latest)]
     (if latest
-      "change latest"
+      (finish latest)
       "start a new one")))
