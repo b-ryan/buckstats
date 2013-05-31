@@ -2,7 +2,7 @@ angular.module('stand', ['ngResource'])
 
   .factory('Event', function($resource) {
     return $resource(
-      '/latest'
+      '/events'
     );
   })
 
@@ -10,7 +10,7 @@ angular.module('stand', ['ngResource'])
 
 var StandCtrl = function($scope, $http, Event) {
 
-  $scope.latest = Event.get();
+  $scope.events = Event.query();
 
   $scope.standing = function() {
     console.log("standing...");
@@ -18,7 +18,7 @@ var StandCtrl = function($scope, $http, Event) {
       .post('/stand')
       .success(function(response) {
         console.log('worked!');
-        $scope.latest.$get();
+        $scope.events.$get();
       });
   };
 
@@ -28,7 +28,7 @@ var StandCtrl = function($scope, $http, Event) {
       .post('/sit')
       .success(function(response) {
         console.log('worked!');
-        $scope.latest.$get();
+        $scope.events.$get();
       });
   };
 };

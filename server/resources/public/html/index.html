@@ -12,7 +12,7 @@
     <div ng-controller="StandCtrl">
       <p><a href="#" ng-click="standing()">I'm Standing</a></p>
       <p><a href="#" ng-click="sitting()">I'm Sitting</a></p>
-      <pre>{{latest | json}}</pre>
+      <pre ng-repeat="event in events">{{event | json}}</pre>
     </div>
   </body>
 </html>

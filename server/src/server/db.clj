@@ -7,15 +7,19 @@
                               :password "password"
                               :host "127.0.0.1"}))
 
-(defn latest-entry []
+(defn- latest []
   (first
     (select "events"
       (fields :id :event :start_time :end_time)
       (order :id :DESC)
       (limit 1))))
 
+(defn get-events [& [lim]]
+  (if lim (select "events" (limit lim))
+          (select "events")))
+
 (defn start-event [event]
-  (let [latest (latest-entry)]
+  (let [latest (latest)]
     (if latest
       "change latest"
       "start a new one")))

@@ -11,16 +11,14 @@
   (GET "/" []
     (resource-response "/html/index.html" {:root "public"}))
 
-  (GET "/latest" []
-    (response (db/latest-entry)))
+  (GET "/events" []
+    (response (db/get-events)))
 
   (POST "/stand" []
-    (println (db/start-event "standing"))
-    (response "standing..."))
+    (response (db/start-event "standing")))
 
   (POST "/sit" []
-    (println (db/start-event "sitting"))
-    (response "standing..."))
+    (response (db/start-event "sitting")))
 
   (route/resources "/")
   (route/not-found "Not Found"))
