@@ -7,27 +7,27 @@ boolean _buttonBeingPressed = false;
 
 void setStanding(boolean standing) {
   _standing = standing;
-  digitalWrite(_standing ? RED : GREEN, LOW);
-  digitalWrite(_standing ? GREEN : RED, HIGH);
+
+  // value of the green pin
+  int gVal = _standing ? HIGH : LOW;
+  digitalWrite(GREEN, gVal);
+  digitalWrite(RED, (gVal + 1) % 2);
+
+  Serial.println(_standing ? "standing" : "sitting");
 }
 
 void setup() {
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
   pinMode(BUTTON, INPUT);
+
   Serial.begin(9600);
-  
+
   setStanding(false);
 }
 
 void loop() {
-  if(digitalRead(BUTTON) == HIGH) {
-    if(!_buttonBeingPressed) {
-      setStanding(!_standing);
-      _buttonBeingPressed = true;
-    }
-  }
-  else {
-    _buttonBeingPressed = false;
-  }
+  boolean standing = digitalRead(BUTTON) == HIGH;
+  if(_standing != standing)
+    setStanding(standing);
 }
