@@ -50,12 +50,14 @@ class LockThread(_Worker):
             signal_name='ActiveChanged'
         )
         loop = gobject.MainLoop()
+        gobject.threads_init()
         loop.run()
 
 logging.basicConfig(level=logging.INFO)
+
 queue = Queue.Queue()
 ArduinoThread(queue).start()
-# LockThread(queue).start()
+LockThread(queue).start()
 
 logging.info('Reading from queue')
 while True:
