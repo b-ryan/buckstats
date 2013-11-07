@@ -53,20 +53,34 @@ class LockThread(_Worker):
         gobject.threads_init()
         loop.run()
 
-logging.basicConfig(level=logging.INFO)
+class Stand:
 
-queue = Queue.Queue()
-ArduinoThread(queue).start()
-LockThread(queue).start()
+    def __init__(self):
+        self.at_desk = True
+        self.standing = False
 
-logging.info('Reading from queue')
-while True:
-    try:
-        # queue.get blocks Ctrl-C signal unless a timeout is specified,
-        # even if the timeout will never be reached.
-        ONE_YEAR = 60 * 60 * 24 * 365
-        message = queue.get(timeout=ONE_YEAR)
-    except Queue.Empty:
-        pass
-    else:
-        logging.info('Message received: ' + message)
+    def __str__(self):
+        _s = 'Away from desk'
+        if self.at_desk:
+            _s = ('Standing' if self.standing else 'Sitting')
+            _s += ' at desk'
+        return _s
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+
+    queue = Queue.Queue()
+    ArduinoThread(queue).start()
+    LockThread(queue).start()
+
+    logging.info('Reading from queue')
+    while True:
+        try:
+            # queue.get blocks Ctrl-C signal unless a timeout is specified,
+            # even if the timeout will never be reached.
+            ONE_YEAR = 60 * 60 * 24 * 365
+            message = queue.get(timeout=ONE_YEAR)
+        except Queue.Empty:
+            pass
+        else:
+            logging.info('Message received: ' + message)
