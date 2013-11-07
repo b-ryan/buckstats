@@ -8,8 +8,7 @@ boolean _buttonBeingPressed = false;
 void setStanding(boolean standing) {
   _standing = standing;
 
-  // value of the green pin
-  int gVal = _standing ? HIGH : LOW;
+  int gVal = _standing ? HIGH : LOW; // value of the green pin
   digitalWrite(GREEN, gVal);
   digitalWrite(RED, (gVal + 1) % 2);
 
