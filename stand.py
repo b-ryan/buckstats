@@ -7,9 +7,15 @@ import dbus
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 import logging
+import psycopg2
 
-def timestamp():
+ONE_YEAR = 60 * 60 * 24 * 365
+
+def dt():
     return time.strftime('%Y-%m-%d %H:%M:%S')
+
+def msg(event):
+    return (event, dt(),)
 
 class _Worker(threading.Thread):
 
@@ -18,7 +24,9 @@ class _Worker(threading.Thread):
         self.daemon = True
         self.queue = queue
 
-    def send_message(self, message):
+    def send_event(self, event):
+        message = msg(event)
+        logging.debug('Queuing ' + str(message))
         self.queue.put(message)
 
 class ArduinoThread(_Worker):
@@ -27,8 +35,9 @@ class ArduinoThread(_Worker):
         logging.info('Starting arduino thread')
         arduino = serial.Serial('/dev/ttyACM0', 9600)
         while True:
-            line = arduino.readline()[:-1]
-            self.send_message(line)
+            line = arduino.readline().replace("\r\n", "\n")
+            sitting_standing = line[:-1]
+            self.send_event(sitting_standing)
 
 class LockThread(_Worker):
 
@@ -38,7 +47,7 @@ class LockThread(_Worker):
             unlocked = 0
             locked = 1
             assert(message in (unlocked, locked,))
-            self.send_message(
+            self.send_event(
                 'locked' if message == locked else 'unlocked'
             )
 
@@ -53,34 +62,38 @@ class LockThread(_Worker):
         gobject.threads_init()
         loop.run()
 
-class Stand:
-
-    def __init__(self):
-        self.at_desk = True
-        self.standing = False
-
-    def __str__(self):
-        _s = 'Away from desk'
-        if self.at_desk:
-            _s = ('Standing' if self.standing else 'Sitting')
-            _s += ' at desk'
-        return _s
+def save(message):
+    connection = psycopg2.connect(
+        host='127.0.0.1',
+        database='stand',
+        user='stand',
+        password='password',
+    )
+    cursor = connection.cursor()
+    cursor.execute('''
+        INSERT into events (event, time)
+        VALUES (%s, %s)
+        ''',
+        message
+    )
+    connection.commit()
+    connection.close()
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     queue = Queue.Queue()
     ArduinoThread(queue).start()
     LockThread(queue).start()
 
     logging.info('Reading from queue')
-    while True:
-        try:
-            # queue.get blocks Ctrl-C signal unless a timeout is specified,
-            # even if the timeout will never be reached.
-            ONE_YEAR = 60 * 60 * 24 * 365
+
+    try:
+        while True:
+            # queue.get blocks Ctrl-C signal unless a timeout is
+            # specified, even if the timeout will never be reached.
             message = queue.get(timeout=ONE_YEAR)
-        except Queue.Empty:
-            pass
-        else:
-            logging.info('Message received: ' + message)
+            logging.debug('Received message ' + str(message))
+            save(message)
+    finally:
+        save(msg('tracking_shutdown'))
