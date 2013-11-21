@@ -1,9 +1,12 @@
 const int RED = 2;
 const int GREEN = 4;
-const int BUTTON = 6;
+const int ECHO = 7;
+const int TRIGGER = 8;
+
+const int DISTANCE_THRESHOLD_CM = 5;
 
 boolean _standing = false;
-boolean _buttonBeingPressed = false;
+boolean _initialized = false;
 
 void setStanding(boolean standing) {
   _standing = standing;
@@ -16,17 +19,41 @@ void setStanding(boolean standing) {
 }
 
 void setup() {
-  pinMode(RED, OUTPUT);
-  pinMode(GREEN, OUTPUT);
-  pinMode(BUTTON, INPUT);
-
   Serial.begin(9600);
 
-  setStanding(false);
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(ECHO, INPUT);
+  pinMode(TRIGGER, OUTPUT);
+}
+
+/*
+ * code for reading the ultrasonic sensor based on:
+ * http://arduinobasics.blogspot.com/2012/11/arduinobasics-hc-sr04-ultrasonic-sensor.html
+ */
+int readSensor() {
+  digitalWrite(TRIGGER, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(TRIGGER, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(TRIGGER, LOW);
+  int duration = pulseIn(ECHO, HIGH);
+
+  int distance = duration / 58.2;
+
+  return distance;
 }
 
 void loop() {
-  boolean standing = digitalRead(BUTTON) == HIGH;
-  if(_standing != standing)
+  int distance = readSensor();
+
+  boolean standing = distance < DISTANCE_THRESHOLD_CM;
+  if(!_initialized || _standing != standing) {
     setStanding(standing);
+    _initialized = true;
+  }
+
+  delay(1000);
 }
