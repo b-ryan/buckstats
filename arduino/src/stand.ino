@@ -46,14 +46,20 @@ int readSensor() {
   return distance;
 }
 
-void loop() {
+void checkStatus() {
   int distance = readSensor();
+
+  if(distance < 0)
+    return;
 
   boolean standing = distance < DISTANCE_THRESHOLD_CM;
   if(!_initialized || _standing != standing) {
     setStanding(standing);
     _initialized = true;
   }
+}
 
+void loop() {
+  checkStatus();
   delay(1000);
 }
