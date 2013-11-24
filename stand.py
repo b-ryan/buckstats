@@ -35,9 +35,12 @@ class ArduinoThread(_Worker):
         logging.info('Starting arduino thread')
         arduino = serial.Serial('/dev/ttyACM0', 9600)
         while True:
-            line = arduino.readline().replace("\r\n", "\n")
-            sitting_standing = line[:-1]
-            self.send_event(sitting_standing)
+            line = arduino.readline().replace("\r\n", "\n")[:-1]
+            pre = "event: " 
+            if pre in line:
+                start = line.find(pre) + len(pre)
+                sitting_standing = line[pre:]
+                self.send_event(sitting_standing)
 
 class LockThread(_Worker):
 
