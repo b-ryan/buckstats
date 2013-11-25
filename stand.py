@@ -37,6 +37,7 @@ class ArduinoThread(_Worker):
         while True:
             line = arduino.readline().replace("\r\n", "\n")
             sitting_standing = line[:-1]
+            assert(sitting_standing in ('sitting', 'standing',))
             self.send_event(sitting_standing)
 
 class LockThread(_Worker):
