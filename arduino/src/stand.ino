@@ -15,6 +15,7 @@ void setStanding(boolean standing) {
   digitalWrite(GREEN, gVal);
   digitalWrite(RED, (gVal + 1) % 2);
 
+  Serial.print("event: ");
   Serial.println(_standing ? "standing" : "sitting");
 }
 
@@ -51,6 +52,9 @@ void checkStatus() {
 
   if(distance < 0)
     return;
+
+  Serial.print("distance: ");
+  Serial.println(distance);
 
   boolean standing = distance < DISTANCE_THRESHOLD_CM;
   if(!_initialized || _standing != standing) {
