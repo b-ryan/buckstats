@@ -39,7 +39,7 @@ class ArduinoThread(_Worker):
             pre = "event: " 
             if pre in line:
                 start = line.find(pre) + len(pre)
-                sitting_standing = line[pre:]
+                sitting_standing = line[start:]
                 assert(sitting_standing in ('sitting', 'standing',))
                 self.send_event(sitting_standing)
 
