@@ -66,19 +66,22 @@ class LockThread(_Worker):
         gobject.threads_init()
         loop.run()
 
-def save(message):
-    connection = psycopg2.connect(
+def get_connection():
+    return psycopg2.connect(
         host='127.0.0.1',
         database='stand',
         user='stand',
         password='password',
     )
+
+def save(event):
+    connection = get_connection()
     cursor = connection.cursor()
     cursor.execute('''
         INSERT into events (event, time)
         VALUES (%s, %s)
         ''',
-        message
+        event
     )
     connection.commit()
     connection.close()

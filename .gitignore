@@ -2,3 +2,4 @@ data/
 .venv/
 arduino/.build
 arduino/build
+*.pyc
