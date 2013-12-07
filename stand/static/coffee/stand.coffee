@@ -1,5 +1,22 @@
-angular.module 'stand', ['ngResource']
+stand = angular.module 'stand', ['ngResource']
+window.stand = stand
 
-window.StandCtrl = ($scope) ->
+RESOURCE_ACTIONS =
+  query:
+    method: 'GET'
+    transformResponse: (data) ->
+      angular.fromJson(data).objects
+    isArray: true
+  update:
+    method: 'PUT'
+    params: {id: '@id'}
+  delete:
+    method: 'DELETE'
+    params: {id: '@id'}
 
-  $scope.x = 2
+stand.factory 'Weight', ($resource) ->
+  $resource '/api/weights/:id', {}, RESOURCE_ACTIONS
+
+window.StandCtrl = ($scope, Weight) ->
+
+  $scope.weights = Weight.query()

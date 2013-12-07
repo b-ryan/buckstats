@@ -5,8 +5,8 @@
     <title>Stand!</title>
 
     <script src="/static/lib/jquery-1.10.0.min.js"></script>
-    <script src="/static/lib/angular.min.js"></script>
-    <script src="/static/lib/angular-resource.min.js"></script>
+    <script src="/static/lib/angular/angular.min.js"></script>
+    <script src="/static/lib/angular/angular-resource.min.js"></script>
 
     <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
@@ -17,7 +17,21 @@
   <body>
     <div ng-controller="StandCtrl">
 
-    {{x}}
+    <table class="table">
+
+      <thead>
+        <tr>
+          <th>Weight</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="weight in weights">
+          <td>{{weight.weight}}</td>
+        </tr>
+      </tbody>
+
+    </table>
 
     </div>
   </body>
