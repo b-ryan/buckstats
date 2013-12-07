@@ -7,5 +7,5 @@ app = flask.Flask(
     static_url_path='/static'
 )
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://stand:password@localhost/stand'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://stand:password@localhost/stand'
 db = SQLAlchemy(app)
