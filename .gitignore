@@ -3,3 +3,4 @@ data/
 arduino/.build
 arduino/build
 *.pyc
+.compiledJs

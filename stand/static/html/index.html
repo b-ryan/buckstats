@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="stand">
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>Stand!</title>
@@ -11,34 +11,14 @@
     <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
 
-    <link href="/static/css/stand.css" rel="stylesheet" media="screen">
-    <script src="/static/js/stand.js"></script>
+    <link href="/static/css/style.css" rel="stylesheet" media="screen">
+    <script src="/static/.compiledJs/stand.js"></script>
   </head>
-  <body ng-app="stand">
+  <body>
     <div ng-controller="StandCtrl">
-      <div class="content">
-        <a class="btn" href="#" ng-click="standing()">I'm Standing</a>
-        <a class="btn" href="#" ng-click="sitting()">I'm Sitting</a>
-        <h2>Events</h2>
-        <table class="table">
-            <thead>
-              <tr>
-                <td>Event</td>
-                <td>Start time</td>
-                <td>End time</td>
-                <td>Duration (hours)</td>
-              </tr>
-            </thead>
-              <tr ng-repeat="event in events">
-                <td>{{event.event}}</td>
-                <td>{{event.start_time | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                <td>{{event.end_time | date:'yyyy-mm-dd HH:mm:ss'}}</td>
-                <td>{{event | event_duration}}</td>
-              </tr>
-            <tbody>
-            </tbody>
-        </table>
-      </div>
+
+    {{x}}
+
     </div>
   </body>
 </html>
