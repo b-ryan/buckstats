@@ -2,3 +2,5 @@ bottle
 psycopg2
 pyserial
 gspread
+alembic
+Flask
