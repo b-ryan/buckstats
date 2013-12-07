@@ -5,3 +5,4 @@ gspread
 alembic
 Flask
 Flask-SQLAlchemy
+Flask-Restless
