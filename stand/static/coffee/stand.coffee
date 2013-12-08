@@ -28,6 +28,33 @@ window.StandCtrl = ($scope, Weight) ->
         spacingRight: 20
       tooltip:
         shared: true
+      rangeSelector:
+        buttons: [
+          {
+            type: 'week'
+            count: 1
+            text: '1w'
+          }
+          {
+            type: 'week'
+            count: 2
+            text: '2w'
+          }
+          {
+            type: 'month'
+            count: 1
+            text: '1m'
+          }
+          {
+            type: 'month'
+            count: 3
+            text: '3m'
+          }
+          {
+            type: 'all'
+            text: 'All'
+          }
+        ]
     title:
       text: "Buck's weight"
     xAxis:
@@ -51,12 +78,12 @@ window.StandCtrl = ($scope, Weight) ->
           enabled: false
         color: '#ffc9c9'
       }
-      # {
-      #   name: 'notes'
-      #   type: 'flags'
-      #   data: []
-      #   onSeries: 'dataseries'
-      # }
+      {
+        name: 'notes'
+        type: 'flags'
+        data: []
+        onSeries: 'dataseries'
+      }
     ]
 
   addWeightsToChart = (weights) ->
@@ -79,9 +106,11 @@ window.StandCtrl = ($scope, Weight) ->
 
     $scope.chart.series[0].data = weightData
     $scope.chart.series[1].data = goalData
-    # $scope.chart.series[2].data = notesData
+    $scope.chart.series[2].data = notesData
 
     $scope.chart.loading = false
+    $scope.chart.options.navigator =
+      enabled: true
 
   $scope.weights = Weight.query
     q:
