@@ -20,14 +20,14 @@ stand.factory 'Weight', ($resource) ->
 window.StandCtrl = ($scope, Weight) ->
 
   $scope.chart =
+    useHighStocks: true
+    loading: true
     options:
       chart:
-        type: 'line'
         zoomType: 'x'
         spacingRight: 20
       tooltip:
         shared: true
-    loading: true
     title:
       text: "Buck's weight"
     xAxis:
@@ -40,29 +40,46 @@ window.StandCtrl = ($scope, Weight) ->
       opposite: true
     series: [
       {
+        name: 'Weight'
+        data: []
+        id: 'dataseries'
+      }
+      {
         name: 'Goal weight'
         data: []
         marker:
-          radius: 0
-        color: 'red'
+          enabled: false
+        color: '#ffc9c9'
       }
-      {
-        name: 'Weight'
-        data: []
-      }
+      # {
+      #   name: 'notes'
+      #   type: 'flags'
+      #   data: []
+      #   onSeries: 'dataseries'
+      # }
     ]
 
   addWeightsToChart = (weights) ->
-    goalData = []
     weightData = []
+    goalData = []
+    notesData = []
 
     for w in weights
       t = new Date(w.date).getTime()
-      goalData.push [t, w.goal_weight]
       weightData.push [t, w.weight]
 
-    $scope.chart.series[0].data = goalData
-    $scope.chart.series[1].data = weightData
+      if w.goal_weight
+        goalData.push [t, w.goal_weight]
+
+      if w.notes
+        notesData.push
+          x: t
+          title: '✔'
+          text: w.notes
+
+    $scope.chart.series[0].data = weightData
+    $scope.chart.series[1].data = goalData
+    # $scope.chart.series[2].data = notesData
 
     $scope.chart.loading = false
 
