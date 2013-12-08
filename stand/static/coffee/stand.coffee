@@ -20,35 +20,51 @@ stand.factory 'Weight', ($resource) ->
 window.StandCtrl = ($scope, Weight) ->
 
   $scope.chart =
-    chart:
-      zoomType: 'x'
-      spacingRight: 20
+    options:
+      chart:
+        type: 'line'
+        zoomType: 'x'
+        spacingRight: 20
+      tooltip:
+        shared: true
+    loading: true
     title:
-      text: 'my friendly chart'
+      text: "Buck's weight"
     xAxis:
       type: 'datetime'
-      title:
-        text: null
+      tickInterval: 7 * 24 * 60 * 60 * 1000 # one week
+      gridLineWidth: 1
     yAxis:
       title:
         text: 'Weight (lbs)'
+      opposite: true
     series: [
+      {
+        name: 'Goal weight'
+        data: []
+        marker:
+          radius: 0
+        color: 'red'
+      }
       {
         name: 'Weight'
         data: []
       }
     ]
-    options:
-      chart:
-        type: 'line'
 
   addWeightsToChart = (weights) ->
-    data = []
+    goalData = []
+    weightData = []
 
     for w in weights
-      data.push [new Date(w.date).getTime(), w.weight]
+      t = new Date(w.date).getTime()
+      goalData.push [t, w.goal_weight]
+      weightData.push [t, w.weight]
 
-    $scope.chart.series[0].data = data
+    $scope.chart.series[0].data = goalData
+    $scope.chart.series[1].data = weightData
+
+    $scope.chart.loading = false
 
   $scope.weights = Weight.query
     q:
