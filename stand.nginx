@@ -1,0 +1,39 @@
+server {
+    listen       80;
+    server_name  data.buckryan.com;
+
+    # project media assuming it's called at media/
+    # keep in mind that media/ will be maintained as a directory by the root command
+    # location ^~ /static/ {
+    #     root   /site/where/project/is;
+    # }
+
+    # location / {
+    #     include fastcgi_params;
+    #     fastcgi_param PATH_INFO $fastcgi_script_name;
+    #     fastcgi_param SCRIPT_NAME "";
+    #     fastcgi_pass unix:/tmp/stand-fcgi.sock;
+    # }
+
+    location / { try_files $uri @yourapplication; }
+    location @yourapplication {
+        include uwsgi_params;
+        uwsgi_pass unix:/tmp/uwsgi.sock;
+    }
+
+
+    # redirect 404s
+    #
+    error_page  404              /404.html;
+    location = /404.html {
+       root   /var/www/nginx-default;
+    }
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /var/www/nginx-default;
+    }
+
+}
