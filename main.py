@@ -8,7 +8,7 @@ def develop():
 
     @app.route('/')
     def index():
-        return app.send_static_file('html/index.html')
+        return app.send_static_file('index.html')
 
     app.run(debug=True)
 
