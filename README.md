@@ -8,7 +8,8 @@ Contains the front-end code. All of it is statically-served content.
 
 # Installation #
 
-virtualenv --system-site-packages .venv
+mkvirtualenv buckstats
+pip install -r requirements.txt
 
 Deployment
 
