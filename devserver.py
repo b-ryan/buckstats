@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from buckstats.app import app
 
-def develop():
+if __name__ == '__main__':
 
     # In development mode, we serve static files with flask. This is not the
     # case in production, where nginx is used. In order to not set up a route
@@ -18,5 +18,3 @@ def develop():
 
     app.run(debug=True)
 
-if __name__ == '__main__':
-    develop()
