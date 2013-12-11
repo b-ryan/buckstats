@@ -17,53 +17,42 @@ RESOURCE_ACTIONS =
 buckstats.factory 'Weight', ($resource) ->
   $resource '/api/weights/:id', {}, RESOURCE_ACTIONS
 
-window.StandCtrl = ($scope, Weight) ->
+MONDAY = 1
+
+latestMonday = () ->
+  d = new Date()
+  d.setHours 0
+  d.setMinutes 0
+  d.setSeconds 0
+
+  dayOfWeek = d.getDay()
+  if dayOfWeek != MONDAY
+    d.setDate(d.getDate() - dayOfWeek + MONDAY)
+
+  return d
+
+buckstats.controller 'StandCtrl', ($scope, $q, Weight) ->
 
   $scope.chart =
     useHighStocks: true
     loading: true
     options:
-      chart:
-        zoomType: 'x'
-        spacingRight: 20
-      tooltip:
-        shared: true
-      rangeSelector:
-        buttons: [
-          {
-            type: 'week'
-            count: 1
-            text: '1w'
-          }
-          {
-            type: 'week'
-            count: 2
-            text: '2w'
-          }
-          {
-            type: 'month'
-            count: 1
-            text: '1m'
-          }
-          {
-            type: 'month'
-            count: 3
-            text: '3m'
-          }
-          {
-            type: 'all'
-            text: 'All'
-          }
-        ]
-    title:
-      text: "Buck's weight"
+      chart: { zoomType: 'x', spacingRight: 20 }
+      tooltip: { shared: true }
+      rangeSelector: { buttons: [
+          { type: 'week', count: 1, text: '1w' }
+          { type: 'week', count: 2, text: '2w' }
+          { type: 'month', count: 1, text: '1m' }
+          { type: 'month', count: 3, text: '3m' }
+          { type: 'all', text: 'All' }
+        ]}
+    title: { text: "Buck's weight" }
     xAxis:
       type: 'datetime'
       tickInterval: 7 * 24 * 60 * 60 * 1000 # one week
       gridLineWidth: 1
     yAxis:
-      title:
-        text: 'Weight (lbs)'
+      title: { text: 'Weight (lbs)' }
       opposite: true
     series: [
       {
