@@ -21,5 +21,3 @@ from http://flaviusim.com/blog/Deploying-Flask-with-nginx-uWSGI-and-Supervisor/ 
 ```
 uwsgi -s /tmp/uwsgi.sock -w main:app -H .venv/ --chmod-socket=666
 ```
-
-# supervisor #
