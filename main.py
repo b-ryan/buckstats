@@ -1,6 +1,16 @@
 #!/usr/bin/env python
-from stand.app import app
-import stand.routes
+from buckstats.app import app
+import buckstats.routes
+
+def develop():
+    app.static_folder = '../frontend'
+    static_url_path = '/static'
+
+    @app.route('/')
+    def index():
+        return app.send_static_file('html/index.html')
+
+    app.run(debug=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    develop()

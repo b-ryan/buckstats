@@ -5,3 +5,4 @@ alembic
 Flask
 Flask-SQLAlchemy
 Flask-Restless
+uwsgi

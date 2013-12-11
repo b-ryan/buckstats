@@ -1,3 +1,13 @@
+# buckstats #
+
+Contains the API code.
+
+# frontend #
+
+Contains the front-end code. All of it is statically-served content.
+
+# Installation #
+
 virtualenv --system-site-packages .venv
 
 Deployment

@@ -1,4 +1,4 @@
-from stand.app import db
+from buckstats.app import db
 
 class Event(db.Model):
 
