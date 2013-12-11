@@ -1,5 +1,5 @@
-stand = angular.module 'stand', ['ngResource', 'highcharts-ng']
-window.stand = stand
+buckstats = angular.module 'buckstats', ['ngResource', 'highcharts-ng']
+window.buckstats = buckstats
 
 RESOURCE_ACTIONS =
   query:
@@ -14,7 +14,7 @@ RESOURCE_ACTIONS =
     method: 'DELETE'
     params: {id: '@id'}
 
-stand.factory 'Weight', ($resource) ->
+buckstats.factory 'Weight', ($resource) ->
   $resource '/api/weights/:id', {}, RESOURCE_ACTIONS
 
 window.StandCtrl = ($scope, Weight) ->
