@@ -17,11 +17,6 @@ def develop():
     def static(filename):
         return app.send_static_file(filename)
 
-    # @app.route('/<path:filename>')
-    # def static_files(filename):
-    #     print filename
-    #     return app.send_static_file(filename)
-
     app.run(debug=True)
 
 if __name__ == '__main__':
