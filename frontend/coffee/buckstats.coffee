@@ -33,7 +33,7 @@ latestMonday = () ->
 
 buckstats.controller 'StandCtrl', ($scope, $q, Weight) ->
 
-  $scope.chart =
+  createBaseChart = () ->
     useHighStocks: true
     loading: true
     options:
@@ -46,7 +46,6 @@ buckstats.controller 'StandCtrl', ($scope, $q, Weight) ->
           { type: 'month', count: 3, text: '3m' }
           { type: 'all', text: 'All' }
         ]}
-    title: { text: "Buck's weight" }
     xAxis:
       type: 'datetime'
       tickInterval: 7 * 24 * 60 * 60 * 1000 # one week
@@ -54,26 +53,10 @@ buckstats.controller 'StandCtrl', ($scope, $q, Weight) ->
     yAxis:
       title: { text: 'Weight (lbs)' }
       opposite: true
-    series: [
-      {
-        name: 'Weight'
-        data: []
-        id: 'dataseries'
-      }
-      {
-        name: 'Goal weight'
-        data: []
-        marker:
-          enabled: false
-        color: '#ffc9c9'
-      }
-      {
-        name: 'notes'
-        type: 'flags'
-        data: []
-        onSeries: 'dataseries'
-      }
-    ]
+    series: []
+
+  $scope.chart = createBaseChart()
+  $scope.chart.title = { text: "Buck's weight" }
 
   addWeightsToChart = (weights) ->
     weightData = []
@@ -93,9 +76,23 @@ buckstats.controller 'StandCtrl', ($scope, $q, Weight) ->
           title: '✔'
           text: w.notes
 
-    $scope.chart.series[0].data = weightData
-    $scope.chart.series[1].data = goalData
-    $scope.chart.series[2].data = notesData
+    $scope.chart.series.push
+      name: 'Weight'
+      data: weightData
+      id: 'dataseries'
+
+    $scope.chart.series.push
+      name: 'Goal weight'
+      data: goalData
+      marker:
+        enabled: false
+      color: '#ffc9c9'
+
+    $scope.chart.series.push
+      name: 'notes'
+      type: 'flags'
+      data: notesData
+      onSeries: 'dataseries'
 
     $scope.chart.loading = false
     $scope.chart.options.navigator =
