@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from buckstats.app import app
-import buckstats.routes
 
 def develop():
 
