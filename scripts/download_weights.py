@@ -5,8 +5,8 @@ import gspread
 _dir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(_dir, '..'))
 
-from stand.model import Weight
-from stand.app import db
+from buckstats.app import db
+from buckstats.model import Weight
 
 login = sys.argv[1]
 pw = sys.argv[2]
