@@ -1,5 +1,0 @@
-CREATE TABLE events (
-  id SERIAL PRIMARY KEY,
-  event VARCHAR(50),
-  time TIMESTAMP
-);
