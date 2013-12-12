@@ -18,8 +18,8 @@ import os, sys
 _dir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(_dir, '..'))
 
-from stand.app import db
-import stand.model
+from buckstats.app import db
+import buckstats.model
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
