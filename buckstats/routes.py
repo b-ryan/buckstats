@@ -35,4 +35,4 @@ def refresh_weights():
 
     db.session.commit()
 
-    return {}
+    return 'ok'
