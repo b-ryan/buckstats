@@ -51,8 +51,7 @@ createBaseChart = () ->
   yAxis:
     title: { text: 'Weight (lbs)' }
     opposite: true
-  series: [
-  ]
+  series: []
 
 buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
 
@@ -64,9 +63,6 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       { name: 'notes',       data: [], type: 'flags', onSeries: 'dataseries' }
     ]
     base
-
-  $scope.chart = createMainChart()
-  $scope.chart.title = { text: "Buck's weight" }
 
   addWeightsToChart = (weights) ->
     weightData = []
@@ -91,10 +87,12 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
     $scope.chart.series[2].data = notesData
 
     $scope.chart.loading = false
-    $scope.chart.options.navigator =
-      enabled: true
+    $scope.chart.options.navigator = { enabled: true }
 
   $scope.refresh = () ->
+    $scope.chart = createMainChart()
+    $scope.chart.title = { text: "Buck's weight" }
+
     $scope.weights = Weight.query
       q:
         order_by: [
@@ -106,7 +104,7 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       , addWeightsToChart
 
   $scope.refreshWeights = () ->
-    $http.post '/api/weights/refresh', () ->
+    $http.post('/api/weights/refresh').success () ->
       $scope.refresh()
 
   $scope.refresh()

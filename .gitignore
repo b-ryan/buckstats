@@ -5,3 +5,4 @@ arduino/build
 *.pyc
 .compiled-js
 tags
+config.py
