@@ -4,3 +4,4 @@ arduino/.build
 arduino/build
 *.pyc
 .compiled-js
+tags
