@@ -13,7 +13,6 @@ latestMonday = () ->
   return d
 
 createBaseChart = () ->
-  loading: true
   chart:
     zoomType: 'x'
     spacingRight: 20
@@ -74,6 +73,8 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
     $scope.chart.loading = false
 
   $scope.refresh = () ->
+    $scope.chart.loading = true
+
     $scope.weights = Weight.query
       q:
         order_by: [
