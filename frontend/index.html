@@ -11,6 +11,7 @@
     <script src="/lib/highcharts/highstock.js"></script>
 
     <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
     <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- MY STUFF -->
@@ -22,7 +23,7 @@
   <body>
     <div ng-controller="StandCtrl">
 
-    <button class="btn" ng-click="refreshWeights()">refresh...
+    <button class="btn" ng-class="{disabled: refreshing}" ng-click="refreshWeights()">refresh...
     </button>
 
     <highchart

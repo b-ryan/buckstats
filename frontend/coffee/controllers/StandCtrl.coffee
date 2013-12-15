@@ -48,6 +48,8 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
 
   $scope.chart = createMainChart()
 
+  $scope.loading = true
+
   addWeightsToChart = (weights) ->
     weightData = []
     goalData = []
@@ -70,11 +72,7 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
     $scope.chart.series[1].data = goalData
     $scope.chart.series[2].data = notesData
 
-    $scope.chart.loading = false
-
   $scope.refresh = () ->
-    $scope.chart.loading = true
-
     $scope.weights = Weight.query
       q:
         order_by: [
@@ -86,7 +84,10 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       , addWeightsToChart
 
   $scope.refreshWeights = () ->
+    $scope.refreshing = true
+
     $http.post('/api/weights/refresh').success () ->
+      $scope.refreshing = false
       $scope.refresh()
 
   $scope.refresh()
