@@ -1,14 +1,14 @@
-MONDAY = 1
+SUNDAY = 0
 
-latestMonday = () ->
+latestSunday = () ->
   d = new Date()
   d.setHours 0
   d.setMinutes 0
   d.setSeconds 0
 
   dayOfWeek = d.getDay()
-  if dayOfWeek != MONDAY
-    d.setDate(d.getDate() - dayOfWeek + MONDAY)
+  if dayOfWeek != SUNDAY
+    d.setDate(d.getDate() - dayOfWeek + SUNDAY)
 
   return d
 
@@ -38,19 +38,17 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
 
   createMainChart = () ->
     base = createBaseChart()
+    base.title = { text: "Buck's weight" }
     base.series = [
       { name: 'Weight',      data: [], marker: { enabled: false }, id: 'dataseries' }
       { name: 'Goal weight', data: [], marker: { enabled: false }, color: '#ffc9c9' }
       { name: 'notes',       data: [], type: 'flags', onSeries: 'dataseries' }
     ]
-    base.title = { text: "Buck's weight" }
     return base
 
   $scope.mainChart = createMainChart()
 
-  $scope.loading = true
-
-  addWeightsToChart = (weights) ->
+  addSeriesToMainChart = (weights) ->
     weightData = []
     goalData = []
     notesData = []
@@ -81,7 +79,7 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
             direction: 'asc'
           }
         ]
-      , addWeightsToChart
+      , addSeriesToMainChart
 
   $scope.refreshWeights = () ->
     $scope.refreshing = true
@@ -91,3 +89,37 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       $scope.refreshMainChart()
 
   $scope.refreshMainChart()
+
+
+  sunday = latestSunday()
+  console.log sunday
+
+  fmt = (date) ->
+    date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+
+  $scope.w1 = Weight.query
+    q:
+      filters: [
+        {
+          name: 'date'
+          op: '>='
+          val: fmt(sunday)
+        }
+      ]
+      order_by: [
+        {
+          field: 'date'
+          direction: 'asc'
+        }
+      ]
+  , (weights) ->
+    data = [new Date(w.date).getTime(), w.weight] for w in weights
+
+    console.log weights
+    console.log data
+
+    $scope.weekOverWeekChart = createBaseChart()
+    $scope.weekOverWeekChart.title = { text: 'Week over week' }
+    $scope.weekOverWeekChart.series = [
+      { name: 'This week', data: data, marker: { enabled: false } }
+    ]
