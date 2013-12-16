@@ -43,10 +43,10 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       { name: 'Goal weight', data: [], marker: { enabled: false }, color: '#ffc9c9' }
       { name: 'notes',       data: [], type: 'flags', onSeries: 'dataseries' }
     ]
-    base.chart.title = { text: "Buck's weight" }
+    base.title = { text: "Buck's weight" }
     return base
 
-  $scope.chart = createMainChart()
+  $scope.mainChart = createMainChart()
 
   $scope.loading = true
 
@@ -68,11 +68,11 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
           title: '✔'
           text: w.notes
 
-    $scope.chart.series[0].data = weightData
-    $scope.chart.series[1].data = goalData
-    $scope.chart.series[2].data = notesData
+    $scope.mainChart.series[0].data = weightData
+    $scope.mainChart.series[1].data = goalData
+    $scope.mainChart.series[2].data = notesData
 
-  $scope.refresh = () ->
+  $scope.refreshMainChart = () ->
     $scope.weights = Weight.query
       q:
         order_by: [
@@ -88,6 +88,6 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
 
     $http.post('/api/weights/refresh').success () ->
       $scope.refreshing = false
-      $scope.refresh()
+      $scope.refreshMainChart()
 
-  $scope.refresh()
+  $scope.refreshMainChart()
