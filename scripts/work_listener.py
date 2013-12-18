@@ -46,7 +46,7 @@ def dt():
 def msg(event):
     return (event, dt(),)
 
-class _Worker(threading.Thread):
+class ListenerThread(threading.Thread):
 
     def __init__(self, queue):
         threading.Thread.__init__(self)
@@ -58,7 +58,7 @@ class _Worker(threading.Thread):
         logging.debug('Queuing ' + str(message))
         self.queue.put(message)
 
-class ArduinoThread(_Worker):
+class ArduinoThread(ListenerThread):
 
     def run(self):
         logging.info('Starting arduino thread')
@@ -72,7 +72,7 @@ class ArduinoThread(_Worker):
                 assert(sitting_standing in ('sitting', 'standing',))
                 self.send_event(sitting_standing)
 
-class LockThread(_Worker):
+class LockThread(ListenerThread):
 
     def run(self):
         logging.info('Starting lock thread')
