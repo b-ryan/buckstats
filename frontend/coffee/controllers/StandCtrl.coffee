@@ -1,22 +1,10 @@
 SUNDAY = 0
-
-latestSunday = () ->
-  d = new Date()
-  d.setHours 0
-  d.setMinutes 0
-  d.setSeconds 0
-
-  dayOfWeek = d.getDay()
-  if dayOfWeek != SUNDAY
-    d.setDate(d.getDate() - dayOfWeek + SUNDAY)
-
-  return d
+MONDAY = 1
 
 createBaseChart = () ->
   chart:
     zoomType: 'x'
     spacingRight: 20
-  navigator: { enabled: true }
   tooltip: { shared: true }
   rangeSelector: { buttons: [
       { type: 'week', count: 1, text: '1w' }
@@ -39,6 +27,7 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
   createMainChart = () ->
     base = createBaseChart()
     base.title = { text: "Buck's weight" }
+    base.navigator = { enabled: true }
     base.series = [
       { name: 'Weight',      data: [], marker: { enabled: false }, id: 'dataseries' }
       { name: 'Goal weight', data: [], marker: { enabled: false }, color: '#ffc9c9' }
@@ -71,15 +60,14 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
     $scope.mainChart.series[2].data = notesData
 
   $scope.refreshMainChart = () ->
-    $scope.weights = Weight.query
-      q:
-        order_by: [
-          {
-            field: 'date'
-            direction: 'asc'
-          }
-        ]
-      , addSeriesToMainChart
+    $scope.weights = Weight.query q:
+      order_by: [
+        {
+          field: 'date'
+          direction: 'asc'
+        }
+      ]
+    , addSeriesToMainChart
 
   $scope.refreshWeights = () ->
     $scope.refreshing = true
@@ -90,20 +78,57 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
 
   $scope.refreshMainChart()
 
+  # ###################################
+  # WEEK OVER WEEK
 
-  sunday = latestSunday()
-  console.log sunday
+  NUM_WEEKS = 4
+
+  $scope.weekOverWeekChart = createBaseChart()
+  $scope.weekOverWeekChart.title = { text: 'Week over week' }
+  $scope.weekOverWeekChart.series = [
+    { name: 'This week', data: [], marker: { enabled: false } }
+    { name: 'Last week', data: [], marker: { enabled: false } }
+    { name: 'Two weeks ago', data: [], marker: { enabled: false } }
+    { name: 'Three weeks ago', data: [], marker: { enabled: false } }
+  ]
+
+  lastStartOfWeek = (weekStartDay) ->
+    d = new Date()
+    d.setHours 0
+    d.setMinutes 0
+    d.setSeconds 0
+
+    dayOfWeek = d.getDay()
+    d.setDate(d.getDate() - dayOfWeek + weekStartDay)
+
+    return d
+
+  modifyWeek = (startOfWeek, offset) ->
+    d = new Date(startOfWeek.getTime())
+    d.setDate(d.getDate() + offset)
+    return d
+
+  previousWeek = (startOfWeek) ->
+    modifyWeek startOfWeek, -7
+
+  nextWeek = (startOfWeek) ->
+    modifyWeek startOfWeek, 7
 
   fmt = (date) ->
     date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
 
-  $scope.w1 = Weight.query
-    q:
+  queryWeightsForWeek = (startOfWeek) ->
+    q = Weight.query q:
       filters: [
         {
           name: 'date'
           op: '>='
-          val: fmt(sunday)
+          val: fmt(startOfWeek)
+        }
+        {
+          name: 'date'
+          op: '<'
+          val: fmt(nextWeek(startOfWeek))
         }
       ]
       order_by: [
@@ -112,14 +137,16 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
           direction: 'asc'
         }
       ]
-  , (weights) ->
-    data = [new Date(w.date).getTime(), w.weight] for w in weights
+    return q.$promise
 
-    console.log weights
-    console.log data
+  sunday = lastStartOfWeek(SUNDAY)
+  weekStarts = (modifyWeek(sunday, i * -7) for i in [0...NUM_WEEKS])
 
-    $scope.weekOverWeekChart = createBaseChart()
-    $scope.weekOverWeekChart.title = { text: 'Week over week' }
-    $scope.weekOverWeekChart.series = [
-      { name: 'This week', data: data, marker: { enabled: false } }
-    ]
+  promises = (queryWeightsForWeek(j) for j in weekStarts)
+
+  console.log promises
+
+  $q.all(promises).then (data) ->
+    for weights, index in data
+      seriesData = (w.weight for w in weights)
+      $scope.weekOverWeekChart.series[index].data = seriesData
