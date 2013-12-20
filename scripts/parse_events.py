@@ -25,5 +25,6 @@ tracker = w.Tracker()
 for event, time in cursor:
     tracker.receive_event(event, time)
 
+print delim.join(('id', 'position', 'start_time', 'end_time',))
 for i, line in enumerate(tracker.times):
-    print delim.join(map(str, [i] + line))
+    print delim.join(map(lambda x: str(x) if x is not None else '', [i] + line))
