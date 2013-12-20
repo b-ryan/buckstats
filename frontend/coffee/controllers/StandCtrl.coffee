@@ -86,10 +86,10 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
   $scope.weekOverWeekChart = createBaseChart()
   $scope.weekOverWeekChart.title = { text: 'Week over week' }
   $scope.weekOverWeekChart.series = [
-    { name: 'This week', data: [], marker: { enabled: false } }
-    { name: 'Last week', data: [], marker: { enabled: false } }
-    { name: 'Two weeks ago', data: [], marker: { enabled: false } }
     { name: 'Three weeks ago', data: [], marker: { enabled: false } }
+    { name: 'Two weeks ago', data: [], marker: { enabled: false } }
+    { name: 'Last week', data: [], marker: { enabled: false } }
+    { name: 'This week', data: [], marker: { enabled: false } }
   ]
 
   lastStartOfWeek = (weekStartDay) ->
@@ -140,7 +140,7 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
     return q.$promise
 
   sunday = lastStartOfWeek(SUNDAY)
-  weekStarts = (modifyWeek(sunday, i * -7) for i in [0...NUM_WEEKS])
+  weekStarts = (modifyWeek(sunday, i * -7) for i in [(NUM_WEEKS-1)..0])
 
   promises = (queryWeightsForWeek(j) for j in weekStarts)
 
