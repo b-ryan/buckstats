@@ -4,6 +4,13 @@ import flask
 from flask.ext.restless import APIManager
 import gspread
 import config
+from stand_logic import event_created
+
+def events_postprocessor(result, **kwargs):
+    event = db.session.query(m.Event)\
+        .filter_by(id=result['id'])\
+        .first()
+    event_created(event)
 
 # this will create routes at /api/
 api = APIManager(app, flask_sqlalchemy_db=db)
@@ -13,6 +20,21 @@ api.create_api(
     methods=['GET'],
     results_per_page=None,
     allow_functions=True,
+)
+
+api.create_api(
+    m.Event,
+    methods=['GET', 'POST'],
+    results_per_page=None,
+    postprocessors={
+        'POST': [events_postprocessor],
+    },
+)
+
+api.create_api(
+    m.DerivedPosition,
+    methods=['GET'],
+    results_per_page=None,
 )
 
 @app.route('/api/weights/refresh', methods=['POST'])
