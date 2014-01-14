@@ -6,3 +6,4 @@ Flask
 Flask-SQLAlchemy
 Flask-Restless
 uwsgi
+requests
