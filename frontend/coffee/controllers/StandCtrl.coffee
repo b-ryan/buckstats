@@ -24,18 +24,36 @@ createBaseChart = () ->
 
 buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
 
+  # ##########################################################################
+  # MAIN CHART
+
   createMainChart = () ->
     base = createBaseChart()
     base.title = { text: "Buck's weight" }
     base.navigator = { enabled: true }
     base.series = [
-      { name: 'Weight',      data: [], marker: { enabled: false }, id: 'dataseries' }
-      { name: 'Goal weight', data: [], marker: { enabled: false }, color: '#ffc9c9' }
-      { name: 'notes',       data: [], type: 'flags', onSeries: 'dataseries' }
+      { name: 'Weight',         data: [], marker: { enabled: false }, id: 'dataseries' }
+      { name: 'Goal weight',    data: [], marker: { enabled: false }, color: '#ffc9c9' }
+      { name: 'Moving average', data: [], marker: { enabled: false }, color: '#666' }
+      { name: 'notes',          data: [], type: 'flags', onSeries: 'dataseries' }
     ]
     return base
 
   $scope.mainChart = createMainChart()
+
+  calculateMovingAverages = (weights) ->
+
+    series = []
+
+    for i in [2...(weights.length - 2)]
+      row = [new Date(weights[i].date).getTime(), 0]
+
+      for j in [-2..2]
+        row[1] += weights[i + j].weight / 5.0
+
+      series.push row
+
+    return series
 
   addSeriesToMainChart = (weights) ->
     weightData = []
@@ -57,7 +75,8 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
 
     $scope.mainChart.series[0].data = weightData
     $scope.mainChart.series[1].data = goalData
-    $scope.mainChart.series[2].data = notesData
+    $scope.mainChart.series[2].data = calculateMovingAverages(weights)
+    $scope.mainChart.series[3].data = notesData
 
   $scope.refreshMainChart = () ->
     $scope.weights = Weight.query q:
@@ -69,8 +88,8 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       ]
     , addSeriesToMainChart
 
-  # ###################################
-  # WEEK OVER WEEK
+  # ##########################################################################
+  # WEEK OVER WEEK CHART
 
   NUM_WEEKS = 4
 
