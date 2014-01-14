@@ -69,15 +69,6 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       ]
     , addSeriesToMainChart
 
-  $scope.refreshWeights = () ->
-    $scope.refreshing = true
-
-    $http.post('/api/weights/refresh').success () ->
-      $scope.refreshing = false
-      $scope.refreshMainChart()
-
-  $scope.refreshMainChart()
-
   # ###################################
   # WEEK OVER WEEK
 
@@ -139,14 +130,24 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
       ]
     return q.$promise
 
-  sunday = lastStartOfWeek(SUNDAY)
-  weekStarts = (modifyWeek(sunday, i * -7) for i in [(NUM_WEEKS-1)..0])
+  $scope.refreshWoWChart = () ->
+    sunday = lastStartOfWeek(SUNDAY)
+    weekStarts = (modifyWeek(sunday, i * -7) for i in [(NUM_WEEKS-1)..0])
 
-  promises = (queryWeightsForWeek(j) for j in weekStarts)
+    promises = (queryWeightsForWeek(j) for j in weekStarts)
 
-  console.log promises
+    $q.all(promises).then (data) ->
+      for weights, index in data
+        seriesData = (w.weight for w in weights)
+        $scope.weekOverWeekChart.series[index].data = seriesData
 
-  $q.all(promises).then (data) ->
-    for weights, index in data
-      seriesData = (w.weight for w in weights)
-      $scope.weekOverWeekChart.series[index].data = seriesData
+  $scope.refreshWeights = () ->
+    $scope.refreshing = true
+
+    $http.post('/api/weights/refresh').success () ->
+      $scope.refreshing = false
+      $scope.refreshMainChart()
+      $scope.refreshWoWChart()
+
+  $scope.refreshMainChart()
+  $scope.refreshWoWChart()
