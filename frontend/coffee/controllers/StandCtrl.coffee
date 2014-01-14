@@ -32,10 +32,30 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
     base.title = { text: "Buck's weight" }
     base.navigator = { enabled: true }
     base.series = [
-      { name: 'Weight',         data: [], marker: { enabled: false }, id: 'dataseries' }
-      { name: 'Goal weight',    data: [], marker: { enabled: false }, color: '#ffc9c9' }
-      { name: 'Moving average', data: [], marker: { enabled: false }, color: '#666' }
-      { name: 'notes',          data: [], type: 'flags', onSeries: 'dataseries' }
+      {
+        name: 'Weight',
+        data: [],
+        marker: { enabled: false },
+        id: 'dataseries'
+      }
+      {
+        name: 'Goal weight',
+        data: [],
+        marker: { enabled: false },
+        color: '#ffc9c9'
+      }
+      {
+        name: 'Moving average',
+        data: [],
+        marker: { enabled: false },
+        color: '#666', visible: false
+      }
+      {
+        name: 'notes',
+        data: [],
+        type: 'flags',
+        onSeries: 'dataseries'
+      }
     ]
     return base
 
