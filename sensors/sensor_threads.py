@@ -1,8 +1,16 @@
+import time
 import threading
 import serial
 import dbus
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
+import logging
+
+def dt():
+    return time.strftime('%Y-%m-%d %H:%M:%S')
+
+def msg(event):
+    return (event, dt(),)
 
 class ListenerThread(threading.Thread):
 
@@ -52,3 +60,10 @@ class LockThread(ListenerThread):
         loop = gobject.MainLoop()
         gobject.threads_init()
         loop.run()
+
+class StdinThread(ListenerThread):
+
+    def run(self):
+        logging.info('Starting stdin thread')
+        while True:
+            self.send_event(raw_input())

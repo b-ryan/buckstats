@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-import time
 import Queue
 import logging
 import psycopg2
 import os
 import requests
 import sensor_threads
+import argparse
 
 BUCKSTATS_TOKEN = os.environ['BUCKSTATS_TOKEN']
 
@@ -40,12 +40,6 @@ class Tracker:
         elif event in ('locked', 'tracking_shutdown',):
             self.lock_status = event
 
-def dt():
-    return time.strftime('%Y-%m-%d %H:%M:%S')
-
-def msg(event):
-    return (event, dt(),)
-
 def get_connection():
     return psycopg2.connect(
         host='127.0.0.1',
@@ -55,6 +49,8 @@ def get_connection():
     )
 
 def save(event):
+    logging.debug(event)
+    return
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute('''
@@ -69,10 +65,21 @@ def save(event):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
-    queue = Queue.Queue()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--sensors', default='arduino,screen')
+    args = parser.parse_args()
 
-    sensor_threads.ArduinoThread(queue).start()
-    sensor_threads.LockThread(queue).start()
+    queue = Queue.Queue()
+    sensors = args.sensors.split(',')
+
+    if 'arduino' in sensors:
+        sensor_threads.ArduinoThread(queue).start()
+
+    if 'screen' in sensors:
+        sensor_threads.LockThread(queue).start()
+
+    if 'stdin' in sensors:
+        sensor_threads.StdinThread(queue).start()
 
     logging.info('Reading from queue')
 
@@ -84,4 +91,4 @@ if __name__ == '__main__':
             logging.debug('Received message ' + str(message))
             save(message)
     finally:
-        save(msg('tracking_shutdown'))
+        save(sensor_threads.msg('tracking_shutdown'))
