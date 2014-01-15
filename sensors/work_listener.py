@@ -49,8 +49,6 @@ def get_connection():
     )
 
 def save(event):
-    logging.debug(event)
-    return
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute('''
