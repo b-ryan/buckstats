@@ -6,24 +6,35 @@ import requests
 import sensor_threads
 import argparse
 import json
+import time
 
 BUCKSTATS_TOKEN = os.environ['BUCKSTATS_TOKEN']
 
 ONE_YEAR = 60 * 60 * 24 * 365
 
-def save(message):
-    event = {
+def save(message, attempt=0):
+    post_data = json.dumps({
         'event': message[0],
         'time': message[1],
-    }
-    requests.post(
+    })
+    logging.debug("sending event to API: " + post_data)
+    response = requests.post(
         'http://localhost:5000/api/events',
-        data=json.dumps(event),
+        data=post_data,
         headers={
             'content-type': 'application/json',
-            'token': BUCKSTATS_TOKEN,
+            # 'token': BUCKSTATS_TOKEN,
         },
     )
+    if response.status_code != requests.codes.ok:
+        logging.debug("API request failed with message: " + response.text)
+        if attempt < 5:
+            logging.debug("Will retry after five seconds.")
+            time.sleep(5)
+            save(message, attempt + 1)
+        else:
+            logging.error("API request completely failed.")
+            raise RuntimeError()
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
