@@ -4,6 +4,13 @@ import buckstats.model as m
 ##TODO this is confusing and should be put into a class
 ## also the name sucks
 
+STARTUP = 'startup'
+SHUTDOWN = 'shutdown'
+UNLOCKED = 'unlocked'
+LOCKED = 'locked'
+SITTING = 'sitting'
+STANDING = 'standing'
+
 
 def get_last_event_in(events):
     return db.session.query(m.Event)\
@@ -12,12 +19,12 @@ def get_last_event_in(events):
         .first()
 
 
-def get_last_lock_event():
-    return get_last_event_in(['unlocked', 'locked'])
+def get_last_computer_event():
+    return get_last_event_in([STARTUP, SHUTDOWN, UNLOCKED, LOCKED])
 
 
 def get_last_position_event():
-    return get_last_event_in(['sitting', 'standing'])
+    return get_last_event_in([SITTING, STANDING])
 
 
 def get_last_derived_position():
@@ -32,15 +39,15 @@ def add_new_status(position, time):
 
 
 def position_changed(event):
-    last_lock_event = get_last_lock_event()
-    assert(last_lock_event)
+    last_comp_event = get_last_computer_event()
+    assert(last_comp_event)
 
     # Since this function received a sitting or standing event,
     # we only need to take action if the computer is unlocked.
     # If the computer is locked, any previous sitting/standing events
     # would have been closed and no stand status needs to be created.
 
-    if last_lock_event.event == 'unlocked':
+    if last_comp_event.event in (STARTUP, UNLOCKED,):
         last_position = get_last_derived_position()
 
         if last_position and last_position.position != event.event:
@@ -54,26 +61,23 @@ def position_changed(event):
             add_new_status(event.event, event.time)
 
 
-def lock_changed(event):
-    if event.event == 'unlocked':
+def computer_changed(event):
+    if event.event in (STARTUP, UNLOCKED,):
         last_position_event = get_last_position_event()
-        position = last_position_event.event if last_position_event else 'sitting'
+        position = last_position_event.event if last_position_event else SITTING
         add_new_status(position, event.time)
 
-    elif event.event == 'locked':
+    elif event.event in (SHUTDOWN, LOCKED,):
         last_position = get_last_derived_position()
         assert(last_position and not last_position.end_time)
         last_position.end_time = event.time
 
 
 def event_created(event):
-    if event.event in ('sitting', 'standing',):
+    if event.event in (SITTING, STANDING,):
         position_changed(event)
 
-    elif event.event in ('unlocked', 'locked',):
-        lock_changed(event)
-
     else:
-        assert(False)
+        computer_changed(event)
 
     db.session.commit()
