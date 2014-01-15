@@ -64,7 +64,9 @@ def position_changed(event):
 def computer_changed(event):
     if event.event in (STARTUP, UNLOCKED,):
         last_position_event = get_last_position_event()
-        position = last_position_event.event if last_position_event else SITTING
+        position = last_position_event.event \
+            if last_position_event \
+            else SITTING
         add_new_status(position, event.time)
 
     elif event.event in (SHUTDOWN, LOCKED,):

@@ -3,7 +3,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 app = flask.Flask(__name__, static_folder=None)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://stand:password@localhost/stand'
+db_uri = 'postgres://stand:password@localhost/stand'
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 db = SQLAlchemy(app)
 
 # Initalize the routes here because the routes module depends
