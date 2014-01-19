@@ -22,7 +22,7 @@ createBaseChart = () ->
     opposite: true
   series: []
 
-buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
+buckstats.controller 'ChartsCtrl', ($scope, $q, $http, Weight) ->
 
   # ##########################################################################
   # MAIN CHART
