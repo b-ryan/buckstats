@@ -116,10 +116,10 @@ buckstats.controller 'StandCtrl', ($scope, $q, $http, Weight) ->
   $scope.weekOverWeekChart = createBaseChart()
   $scope.weekOverWeekChart.title = { text: 'Week over week' }
   $scope.weekOverWeekChart.series = [
-    { name: 'Three weeks ago', data: [], marker: { enabled: false } }
-    { name: 'Two weeks ago', data: [], marker: { enabled: false } }
-    { name: 'Last week', data: [], marker: { enabled: false } }
-    { name: 'This week', data: [], marker: { enabled: false } }
+    { name: 'Three weeks ago', data: [] }
+    { name: 'Two weeks ago', data: [] }
+    { name: 'Last week', data: [] }
+    { name: 'This week', data: [] }
   ]
 
   lastStartOfWeek = (weekStartDay) ->
