@@ -7,12 +7,12 @@ import config
 from stand_logic import event_created
 import os
 
-BUCKSTATS_TOKEN = os.environ['BUCKSTATS_TOKEN']
-
 
 def auth_preprocessor(**kwargs):
-    token = flask.request.headers.get('token')
-    if token != BUCKSTATS_TOKEN:
+    token = db.session.query(m.ApiKey).first()
+    assert(token)
+
+    if flask.request.headers.get('token') != token:
         raise flask.abort(401)
 
 # this will create routes at /api/
