@@ -12,7 +12,7 @@ def auth_preprocessor(**kwargs):
     token = db.session.query(m.ApiKey).first()
     assert(token)
 
-    if flask.request.headers.get('token') != token:
+    if flask.request.headers.get('token') != token.api_key:
         raise flask.abort(401)
 
 # this will create routes at /api/

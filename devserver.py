@@ -16,5 +16,4 @@ if __name__ == '__main__':
     def static(filename):
         return app.send_static_file(filename)
 
-    app.run(debug=True)
-
+    app.run(debug=True, port=8080)
