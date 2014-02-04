@@ -17,4 +17,3 @@ if __name__ == '__main__':
         return app.send_static_file(filename)
 
     app.run(debug=True)
-
