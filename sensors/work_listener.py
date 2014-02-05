@@ -12,6 +12,8 @@ BUCKSTATS_TOKEN = os.environ['BUCKSTATS_TOKEN']
 
 ONE_YEAR = 60 * 60 * 24 * 365
 
+logging.basicConfig(level=logging.DEBUG)
+
 def save(message, attempt=0):
     post_data = json.dumps({
         'event': message[0],
@@ -19,11 +21,11 @@ def save(message, attempt=0):
     })
     logging.debug("sending event to API: " + post_data)
     response = requests.post(
-        'http://localhost:5000/api/events',
+        'https://data.buckryan.com/api/events',
         data=post_data,
         headers={
             'content-type': 'application/json',
-            # 'token': BUCKSTATS_TOKEN,
+            'token': BUCKSTATS_TOKEN,
         },
     )
     if response.status_code != requests.codes.ok:
@@ -37,8 +39,6 @@ def save(message, attempt=0):
             raise RuntimeError()
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--sensors', default='arduino,screen')
     args = parser.parse_args()
