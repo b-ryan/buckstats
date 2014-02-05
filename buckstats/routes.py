@@ -8,6 +8,12 @@ from stand_logic import event_created
 import os
 
 
+@app.errorhandler(Exception)
+def internal_error(exception):
+    app.logger.exception(exception)
+    flask.abort(500)
+
+
 def auth_preprocessor(**kwargs):
     token = db.session.query(m.ApiKey).first()
     assert(token)

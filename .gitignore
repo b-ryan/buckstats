@@ -6,3 +6,4 @@ arduino/build
 .compiled-js
 tags
 config.py
+app.log
