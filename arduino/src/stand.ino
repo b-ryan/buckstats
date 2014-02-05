@@ -3,7 +3,7 @@ const int GREEN = 4;
 const int ECHO = 7;
 const int TRIGGER = 8;
 
-const int DISTANCE_THRESHOLD_CM = 135;
+const int DISTANCE_THRESHOLD_CM = 185;
 
 boolean _standing = false;
 boolean _initialized = false;
