@@ -15,6 +15,7 @@ deploy-frontend:
 	rsync --recursive --compress --delete -v frontend/ buck@buckryan.com:/usr/share/nginx/www/data.buckryan.com
 
 deploy-buckstats:
+	find buckstats/ -name *.pyc | xargs rm || true
 	scp requirements.txt buck@buckryan.com:~/
 	ssh buck@buckryan.com ".virtualenvs/buckstats/bin/pip install -r requirements.txt"
 	rsync --recursive --compress --delete -v \
