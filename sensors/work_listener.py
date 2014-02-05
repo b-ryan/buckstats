@@ -20,20 +20,25 @@ def save(message, attempt=0):
         'time': message[1],
     })
     logging.debug("sending event to API: " + post_data)
-    response = requests.post(
-        'https://data.buckryan.com/api/events',
-        data=post_data,
-        headers={
-            'content-type': 'application/json',
-            'token': BUCKSTATS_TOKEN,
-        },
-    )
-    if response.status_code != requests.codes.ok:
+    try:
+        response = requests.post(
+            'https://data.buckryan.com/api/events',
+            data=post_data,
+            headers={
+                'content-type': 'application/json',
+                'token': BUCKSTATS_TOKEN,
+            },
+        )
+    except Exception, e:
+        logging.debug("Will retry after five seconds.")
+        return save(message, attempt + 1)
+
+    if response.status_code != requests.codes.created:
         logging.debug("API request failed with message: " + response.text)
         if attempt < 5:
             logging.debug("Will retry after five seconds.")
             time.sleep(5)
-            save(message, attempt + 1)
+            return save(message, attempt + 1)
         else:
             logging.error("API request completely failed.")
             raise RuntimeError()
