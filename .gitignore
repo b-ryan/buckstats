@@ -7,3 +7,6 @@ arduino/build
 tags
 config.py
 app.log
+
+dist/
+*.egg-info/
